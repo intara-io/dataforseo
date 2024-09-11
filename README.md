@@ -54,9 +54,60 @@ def serp(self, keyword: str | list[str], location_code: int = 2840, **kwargs) ->
 **Example:**
 
 ```python
-response = client.serp(keyword="python programming")
-print(response)
+In [1]: from dataforseo.client import DataForSEOClient
+
+In [2]: client = DataForSEOClient(api_key="<api_key>", sandbox=False)
+
+In [3]: res = client.serp("seo consulting")
+
+In [4]: res["tasks"][0]["result"]
+Out[4]:
+[{'keyword': 'seo consulting',
+  'type': 'organic',
+  'se_domain': 'google.com',
+  'location_code': 2840,
+  'language_code': 'en',
+  'check_url': 'https://www.google.com/search?q=seo%20consulting&num=100&hl=en&gl=US&gws_rd=cr&ie=UTF-8&oe=UTF-8&glp=1&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc',
+  'datetime': '2024-09-11 09:44:26 +00:00',
+  'spell': None,
+  'item_types': ['organic', 'people_also_ask', 'images', 'related_searches'],
+  'se_results_count': 43500000,
+  'items_count': 102,
+  'items': [{'type': 'organic',
+    'rank_group': 1,
+    'rank_absolute': 1,
+    'position': 'left',
+    'xpath': '/html[1]/body[1]/div[3]/div[1]/div[13]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]',
+    'domain': 'www.coursera.org',
+    'title': 'What Is an SEO Consultant and Do You Need One?',
+    'url': 'https://www.coursera.org/articles/seo-consultant',
+    'cache_url': None,
+    'related_search_url': None,
+    'breadcrumb': 'https://www.coursera.org › ... › Business › Marketing',
+    'website_name': 'Coursera',
+    'is_image': False,
+    'is_video': False,
+    'is_featured_snippet': False,
+    'is_malicious': False,
+    'is_web_story': False,
+    'description': "An SEO consultant helps businesses improve their websites' ranking in search engine results. An SEO consultant's goal is to make it easier for\xa0...",
+    'pre_snippet': '11/29/2023 00:00:00',
+    'extended_snippet': None,
+    'images': None,
+    'amp_version': False,
+    'rating': None,
+    'price': None,
+    'highlighted': ['SEO consultant', "SEO consultant's"],
+    'links': None,
+    'faq': None,
+    'extended_people_also_search': None,
+    'about_this_result': None,
+    'related_result': None,
+    'timestamp': '2023-11-29 00:00:00 +00:00',
+    'rectangle': None},
+...
 ```
+
 
 #### `msv`
 
@@ -82,8 +133,38 @@ def msv(self, keyword: str | list[str], location_code: int = 2840, date_from: st
 **Example:**
 
 ```python
-response = client.msv(keyword="python programming")
-print(response)
+In [1]: from dataforseo.client import DataForSEOClient
+
+In [2]: client = DataForSEOClient(api_key="<api_key>", sandbox=False)
+
+In [3]: res = client.msv("seo consulting")
+
+In [4]: res["tasks"][0]["result"]
+Out[4]:
+[{'keyword': 'seo consulting',
+  'spell': None,
+  'location_code': 2840,
+  'language_code': 'en',
+  'search_partners': False,
+  'competition': 'LOW',
+  'competition_index': 9,
+  'search_volume': 9900,
+  'low_top_of_page_bid': 10,
+  'high_top_of_page_bid': 48.04,
+  'cpc': 48.04,
+  'monthly_searches': [{'year': 2024, 'month': 8, 'search_volume': 8100},
+   {'year': 2024, 'month': 7, 'search_volume': 8100},
+   {'year': 2024, 'month': 6, 'search_volume': 6600},
+   {'year': 2024, 'month': 5, 'search_volume': 18100},
+   {'year': 2024, 'month': 4, 'search_volume': 8100},
+   {'year': 2024, 'month': 3, 'search_volume': 9900},
+   {'year': 2024, 'month': 2, 'search_volume': 8100},
+   {'year': 2024, 'month': 1, 'search_volume': 12100},
+   {'year': 2023, 'month': 12, 'search_volume': 8100},
+   {'year': 2023, 'month': 11, 'search_volume': 9900},
+   {'year': 2023, 'month': 10, 'search_volume': 8100},
+   {'year': 2023, 'month': 9, 'search_volume': 8100}]}]
+
 ```
 
 #### `keywords_for_site`
@@ -110,8 +191,42 @@ def keywords_for_site(self, site: str, location_code: int = 2840, date_from: str
 **Example:**
 
 ```python
-response = client.keywords_for_site(site="example.com")
-print(response)
+In [1]: from dataforseo.client import DataForSEOClient
+
+In [2]: client = DataForSEOClient(api_key="<api_key>", sandbox=False)
+
+In [3]: res = client.keywords_for_site("intara.io")
+
+In [4]: res["tasks"][0]["result"]
+Out[4]:
+[{'keyword': 'content strategy',
+  'location_code': 2840,
+  'language_code': None,
+  'search_partners': False,
+  'competition': 'LOW',
+  'competition_index': 8,
+  'search_volume': 6600,
+  'low_top_of_page_bid': 1.36,
+  'high_top_of_page_bid': 12.88,
+  'cpc': 8.05,
+  'monthly_searches': [{'year': 2024, 'month': 8, 'search_volume': 5400},
+   {'year': 2024, 'month': 7, 'search_volume': 6600},
+   {'year': 2024, 'month': 6, 'search_volume': 5400},
+   {'year': 2024, 'month': 5, 'search_volume': 6600},
+   {'year': 2024, 'month': 4, 'search_volume': 6600},
+   {'year': 2024, 'month': 3, 'search_volume': 6600},
+   {'year': 2024, 'month': 2, 'search_volume': 6600},
+   {'year': 2024, 'month': 1, 'search_volume': 8100},
+   {'year': 2023, 'month': 12, 'search_volume': 5400},
+   {'year': 2023, 'month': 11, 'search_volume': 6600},
+   {'year': 2023, 'month': 10, 'search_volume': 8100},
+   {'year': 2023, 'month': 9, 'search_volume': 6600}],
+  'keyword_annotations': {'concepts': [{'name': 'strategies',
+     'concept_group': {'name': 'Others', 'type': None}},
+    {'name': 'Non-Brands',
+     'concept_group': {'name': 'Non-Brands', 'type': 'NON_BRAND'}}]}},
+ {'keyword': 'content marketing',
+...
 ```
 
 #### `domain_pages`
@@ -135,8 +250,11 @@ def domain_pages(self, domain: str | list[str], **kwargs) -> dict:
 **Example:**
 
 ```python
-response = client.domain_pages(domain="example.com")
-print(response)
+In [1]: from dataforseo.client import DataForSEOClient
+
+In [2]: client = DataForSEOClient(api_key="<api_key>", sandbox=False)
+
+In [3]: res = client.domain_pages("intara.io", limit=1)
 ```
 
 #### `domain_pages_summary`
@@ -162,8 +280,11 @@ def domain_pages_summary(self, domain: str | list[str], **kwargs) -> dict:
 **Example:**
 
 ```python
-response = client.domain_pages_summary(domain="example.com")
-print(response)
+In [1]: from dataforseo.client import DataForSEOClient
+
+In [2]: client = DataForSEOClient(api_key="<api_key>", sandbox=False)
+
+In [3]: res = client.domain_pages_summary("intara.io")
 ```
 
 ## Locations
