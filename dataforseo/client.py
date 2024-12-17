@@ -27,23 +27,46 @@ class DataForSEOClient:
         )
 
     def serp(
-        self, keyword: str | list[str], location_code: int = 2840, **kwargs
-    ) -> dict:
+        self,
+        keyword: str | list[str] = None,
+        location_code: int = 2840,
+        live: bool = True,
+        task_id: str = None,
+        **kwargs,
+    ) -> dict | list[dict]:
         """
         Fetches SERP (Search Engine Results Page) data from the DataForSEO API.
         Args:
             keyword (str | list[str]): A keyword or a list of keywords to search for.
             location_code (int, optional): The location code for the search. Defaults to 2840 (USA).
+            live (bool, optional): If True, fetch the data live. Otherwise, create a task. Defaults to True.
+            task_id (str, optional): The ID of the task for which to retrieve SERP data. Defaults to None.
             **kwargs: Additional parameters to include in the payload.
         Returns:
             dict: The JSON response from the DataForSEO API.
         Docs:
             https://docs.dataforseo.com/v3/serp/overview/
         """
+        if task_id:
+            url = self.api_url + f"serp/google/organic/task_get/advanced/{task_id}"
+            response = self.client.get(url)
+            json_response = response.json()
+            return (
+                json_response["tasks"][0]["result"]
+                if "tasks" in json_response
+                else None
+            )
+
+        if not keyword:
+            raise ValueError("You must provide a keyword or list of keywords.")
+
         if isinstance(keyword, str):
             keyword = [keyword]
 
-        url = self.api_url + "serp/google/organic/live/advanced"
+        if live:
+            url = self.api_url + "serp/google/organic/live/advanced"
+        else:
+            url = self.api_url + "serp/google/organic/task_post"
         payload = [
             {
                 **{
@@ -59,16 +82,27 @@ class DataForSEOClient:
             for kw in keyword
         ]
         response = self.client.post(url, json=payload)
-        return response.json()
+        if live:
+            return response.json()
+        return [
+            {
+                "task_id": task["id"],
+                "keyword": task["data"]["keyword"],
+                "location_code": task["data"]["location_code"],
+            }
+            for task in response.json()["tasks"]
+        ]
 
     def msv(
         self,
-        keyword: str | list[str],
+        keyword: str | list[str] = None,
         location_code: int = 2840,
         date_from: str = None,
         date_to: str = None,
+        live: bool = True,
+        task_id: str = None,
         **kwargs,
-    ) -> dict:
+    ) -> dict | list[dict]:
         """
         Fetches monthly search volume (MSV) data for given keywords from the DataForSEO API.
         Args:
@@ -76,16 +110,37 @@ class DataForSEOClient:
             location_code (int, optional): The location code for the search volume data. Defaults to 2840 (USA).
             date_from (str, optional): The start date for the search volume data in 'YYYY-MM-DD' format. Defaults to None.
             date_to (str, optional): The end date for the search volume data in 'YYYY-MM-DD' format. Defaults to None.
+            live (bool, optional): If True, fetch the data live. Otherwise, create a task. Defaults to True.
+            task_id (str, optional): The ID of the task for which to retrieve MSV data. Defaults to None.
             **kwargs: Additional keyword arguments to include in the payload.
         Returns:
             dict: The response from the DataForSEO API containing the MSV data.
         Docs:
             https://docs.dataforseo.com/v3/keywords_data/google_ads/search_volume/live/
         """
+        if task_id:
+            url = (
+                self.api_url
+                + f"keywords_data/google_ads/search_volume/task_get/{task_id}"
+            )
+            response = self.client.get(url)
+            json_response = response.json()
+            return (
+                json_response["tasks"][0]["result"]
+                if "tasks" in json_response
+                else None
+            )
+
+        if not keyword:
+            raise ValueError("You must provide a keyword or list of keywords.")
+
         if isinstance(keyword, str):
             keyword = [keyword]
 
-        url = self.api_url + "keywords_data/google_ads/search_volume/live"
+        if live:
+            url = self.api_url + "keywords_data/google_ads/search_volume/live"
+        else:
+            url = self.api_url + "keywords_data/google_ads/search_volume/task_post"
         payload = [
             {
                 **{
@@ -99,14 +154,25 @@ class DataForSEOClient:
             }
         ]
         response = self.client.post(url, json=payload)
-        return response.json()
+        if live:
+            return response.json()
+        return [
+            {
+                "task_id": task["id"],
+                "keywords": task["data"]["keywords"],
+                "location_code": task["data"]["location_code"],
+            }
+            for task in response.json()["tasks"]
+        ]
 
     def keywords_for_site(
         self,
-        site: str | list[str],
+        site: str | list[str] = None,
         location_code: int = 2840,
         date_from: str = None,
         date_to: str = None,
+        live: bool = True,
+        task_id: str = None,
         **kwargs,
     ) -> dict:
         """
@@ -116,13 +182,34 @@ class DataForSEOClient:
             location_code (int): The location code for the keyword data. Defaults to 2840 (USA).
             date_from (str): The start date for the keyword data in 'YYYY-MM-DD' format.
             date_to (str): The end date for the keyword data in 'YYYY-MM-DD' format.
+            live (bool): If True, fetch the data live. Otherwise, create a task. Defaults to True.
+            task_id (str): The ID of the task for which to retrieve keyword data.
             **kwargs: Additional keyword arguments to include in the payload.
         Returns:
             dict: The response from the DataForSEO API containing the keyword data.
         Docs:
             https://docs.dataforseo.com/v3/keywords_data/google_ads/keywords_for_site/live/
         """
-        url = self.api_url + "keywords_data/google_ads/keywords_for_site/live"
+        if task_id:
+            url = (
+                self.api_url
+                + f"keywords_data/google_ads/keywords_for_site/task_get/{task_id}"
+            )
+            response = self.client.get(url)
+            json_response = response.json()
+            return (
+                json_response["tasks"][0]["result"]
+                if "tasks" in json_response
+                else None
+            )
+
+        if not site:
+            raise ValueError("You must provide a site or list of sites.")
+
+        if live:
+            url = self.api_url + "keywords_data/google_ads/keywords_for_site/live"
+        else:
+            url = self.api_url + "keywords_data/google_ads/keywords_for_site/task_post"
 
         if isinstance(site, str):
             site = [site]
@@ -138,7 +225,16 @@ class DataForSEOClient:
             for s in site
         ]
         response = self.client.post(url, json=payload)
-        return response.json()
+        if live:
+            return response.json()
+        return [
+            {
+                "task_id": task["id"],
+                "target": task["data"]["target"],
+                "location_code": task["data"]["location_code"],
+            }
+            for task in response.json()["tasks"]
+        ]
 
     def domain_pages(self, domain: str | list[str], **kwargs) -> dict:
         """

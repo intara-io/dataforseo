@@ -37,12 +37,14 @@ client = DataForSEOClient(api_key, sandbox=True)
 Fetches SERP (Search Engine Results Page) data from the DataForSEO API.
 
 ```python
-def serp(self, keyword: str | list[str], location_code: int = 2840, **kwargs) -> dict:
+def serp(self, keyword: str | list[str], location_code: int = 2840, live: bool = False, task_id: str = None, **kwargs) -> dict:
     """
     Fetches SERP (Search Engine Results Page) data from the DataForSEO API.
     Args:
         keyword (str | list[str]): A keyword or a list of keywords to search for.
         location_code (int, optional): The location code for the search. Defaults to 2840 (USA).
+        live (bool, optional): Whether to fetch live data. Defaults to False.
+        task_id (str, optional): The task ID for the search. Defaults to None.
         **kwargs: Additional parameters to include in the payload.
     Returns:
         dict: The JSON response from the DataForSEO API.
@@ -114,7 +116,7 @@ Out[4]:
 Fetches Monthly Search Volume (MSV) data from the DataForSEO API.
 
 ```python
-def msv(self, keyword: str | list[str], location_code: int = 2840, date_from: str = None, date_to: str = None, **kwargs) -> dict:
+def msv(self, keyword: str | list[str], location_code: int = 2840, date_from: str = None, date_to: str = None, live: bool = False, task_id: str = None, **kwargs) -> dict:
     """
     Fetches monthly search volume (MSV) data for given keywords from the DataForSEO API.
     Args:
@@ -122,6 +124,8 @@ def msv(self, keyword: str | list[str], location_code: int = 2840, date_from: st
         location_code (int, optional): The location code for the search volume data. Defaults to 2840 (USA).
         date_from (str, optional): The start date for the search volume data in 'YYYY-MM-DD' format. Defaults to None.
         date_to (str, optional): The end date for the search volume data in 'YYYY-MM-DD' format. Defaults to None.
+        live (bool, optional): Whether to fetch live data. Defaults to False.
+        task_id (str, optional): The task ID for the search. Defaults to None.
         **kwargs: Additional keyword arguments to include in the payload.
     Returns:
         dict: The response from the DataForSEO API containing the MSV data.
@@ -172,7 +176,7 @@ Out[4]:
 Fetches keywords for a given site from the DataForSEO API.
 
 ```python
-def keywords_for_site(self, site: str, location_code: int = 2840, date_from: str = None, date_to: str = None, **kwargs) -> dict:
+def keywords_for_site(self, site: str, location_code: int = 2840, date_from: str = None, date_to: str = None, live: bool = False, task_id: str = None, **kwargs) -> dict:
     """
     Fetches keywords for a given site from the DataForSEO API.
     Args:
@@ -180,6 +184,8 @@ def keywords_for_site(self, site: str, location_code: int = 2840, date_from: str
         location_code (int): The location code for the keyword data. Defaults to 2840 (USA).
         date_from (str): The start date for the keyword data in 'YYYY-MM-DD' format.
         date_to (str): The end date for the keyword data in 'YYYY-MM-DD' format.
+        live (bool, optional): Whether to fetch live data. Defaults to False.
+        task_id (str, optional): The task ID for the search. Defaults to None.
         **kwargs: Additional keyword arguments to include in the payload.
     Returns:
         dict: The response from the DataForSEO API containing the keyword data.
