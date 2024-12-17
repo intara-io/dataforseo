@@ -8,13 +8,13 @@ To install the package, use the following command:
 
 ### pip
 ```bash
-pip install git+https://github.com/Tre-Jones-Consulting/dataforseo
+pip install git+https://github.com/intara-io/dataforseo
 ```
 
 ### poetry
 
 ```bash
-poetry add git+https://github.com/Tre-Jones-Consulting/dataforseo
+poetry add git+https://github.com/intara-io/dataforseo
 ```
 
 ## Usage
