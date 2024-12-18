@@ -266,7 +266,7 @@ class DataForSEOClient:
                 "target": task["data"]["target"],
                 "location_code": task["data"]["location_code"],
             }
-            for task in response.json()["tasks"]
+            for task in response["tasks"]
         ]
 
     def domain_pages(self, domain: str | list[str], **kwargs) -> dict:
