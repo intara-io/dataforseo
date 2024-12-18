@@ -55,6 +55,10 @@ class DataForSEOClient:
             url = self.api_url + f"serp/google/organic/task_get/advanced/{task_id}"
             response = self.client.get(url)
             json_response = response.json()
+            if json_response["tasks_error"] > 0:
+                raise InvalidParameterError(
+                    json_response["tasks"][0].get("status_message")
+                )
             return (
                 json_response["tasks"][0]["result"]
                 if "tasks" in json_response
@@ -134,6 +138,11 @@ class DataForSEOClient:
             )
             response = self.client.get(url)
             json_response = response.json()
+            if json_response["tasks_error"] > 0:
+                raise InvalidParameterError(
+                    json_response["tasks"][0].get("status_message")
+                )
+
             return (
                 json_response["tasks"][0]["result"]
                 if "tasks" in json_response
