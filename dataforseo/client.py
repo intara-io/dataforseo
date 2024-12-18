@@ -3,6 +3,10 @@ import base64
 import requests
 
 
+class InvalidParameterError(Exception):
+    pass
+
+
 class DataForSEOClient:
     def __init__(self, api_key: str, sandbox: bool = False) -> None:
         """
@@ -84,13 +88,18 @@ class DataForSEOClient:
         response = self.client.post(url, json=payload)
         if live:
             return response.json()
+
+        response = response.json()
+        if response["tasks_error"] > 0:
+            raise InvalidParameterError(response["tasks"][0].get("status_message"))
+
         return [
             {
                 "task_id": task["id"],
                 "keyword": task["data"]["keyword"],
                 "location_code": task["data"]["location_code"],
             }
-            for task in response.json()["tasks"]
+            for task in response["tasks"]
         ]
 
     def msv(
@@ -156,13 +165,18 @@ class DataForSEOClient:
         response = self.client.post(url, json=payload)
         if live:
             return response.json()
+
+        response = response.json()
+        if response["tasks_error"] > 0:
+            raise InvalidParameterError(response["tasks"][0].get("status_message"))
+
         return [
             {
                 "task_id": task["id"],
                 "keywords": task["data"]["keywords"],
                 "location_code": task["data"]["location_code"],
             }
-            for task in response.json()["tasks"]
+            for task in response["tasks"]
         ]
 
     def keywords_for_site(
