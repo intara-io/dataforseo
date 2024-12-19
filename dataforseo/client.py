@@ -4,7 +4,9 @@ import requests
 
 
 class InvalidParameterError(Exception):
-    pass
+    def __init__(self, message, error_code=None):
+        super().__init__(message)
+        self.error_code = error_code
 
 
 class DataForSEOClient:
@@ -57,8 +59,10 @@ class DataForSEOClient:
             json_response = response.json()
             if json_response["tasks_error"] > 0:
                 raise InvalidParameterError(
-                    json_response["tasks"][0].get("status_message")
+                    json_response["tasks"][0].get("status_message"),
+                    error_code=json_response["tasks"][0].get("status_code"),
                 )
+
             return (
                 json_response["tasks"][0]["result"]
                 if "tasks" in json_response
@@ -90,12 +94,16 @@ class DataForSEOClient:
             for kw in keyword
         ]
         response = self.client.post(url, json=payload)
-        if live:
-            return response.json()
 
         response = response.json()
         if response["tasks_error"] > 0:
-            raise InvalidParameterError(response["tasks"][0].get("status_message"))
+            raise InvalidParameterError(
+                response["tasks"][0].get("status_message"),
+                error_code=response["tasks"][0].get("status_code"),
+            )
+
+        if live:
+            return response
 
         return [
             {
@@ -140,7 +148,8 @@ class DataForSEOClient:
             json_response = response.json()
             if json_response["tasks_error"] > 0:
                 raise InvalidParameterError(
-                    json_response["tasks"][0].get("status_message")
+                    json_response["tasks"][0].get("status_message"),
+                    error_code=json_response["tasks"][0].get("status_code"),
                 )
 
             return (
@@ -172,12 +181,16 @@ class DataForSEOClient:
             }
         ]
         response = self.client.post(url, json=payload)
-        if live:
-            return response.json()
 
         response = response.json()
         if response["tasks_error"] > 0:
-            raise InvalidParameterError(response["tasks"][0].get("status_message"))
+            raise InvalidParameterError(
+                response["tasks"][0].get("status_message"),
+                error_code=response["tasks"][0].get("status_code"),
+            )
+
+        if live:
+            return response
 
         return [
             {
@@ -222,7 +235,8 @@ class DataForSEOClient:
             json_response = response.json()
             if json_response["tasks_error"] > 0:
                 raise InvalidParameterError(
-                    json_response["tasks"][0].get("status_message")
+                    json_response["tasks"][0].get("status_message"),
+                    error_code=json_response["tasks"][0].get("status_code"),
                 )
 
             return (
@@ -253,12 +267,16 @@ class DataForSEOClient:
             for s in site
         ]
         response = self.client.post(url, json=payload)
-        if live:
-            return response.json()
 
         response = response.json()
         if response["tasks_error"] > 0:
-            raise InvalidParameterError(response["tasks"][0].get("status_message"))
+            raise InvalidParameterError(
+                response["tasks"][0].get("status_message"),
+                error_code=response["tasks"][0].get("status_code"),
+            )
+
+        if live:
+            return response
 
         return [
             {
