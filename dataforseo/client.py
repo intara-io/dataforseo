@@ -63,7 +63,7 @@ class DataForSEOClient:
 
     def serp(
         self,
-        keyword: str | list[str] = None,
+        keyword: str | list[str] | list[tuple] = None,
         location_code: int = 2840,
         live: bool = True,
         task_id: str = None,
@@ -72,7 +72,7 @@ class DataForSEOClient:
         """
         Fetches SERP (Search Engine Results Page) data from the DataForSEO API.
         Args:
-            keyword (str | list[str]): A keyword or a list of keywords to search for.
+            keyword (str | list[str] | list[tuple]): A keyword or list of keywords to search for. If tuples, the second element should be the location code.
             location_code (int, optional): The location code for the search. Defaults to 2840 (USA).
             live (bool, optional): If True, fetch the data live. Otherwise, create a task. Defaults to True.
             task_id (str, optional): The ID of the task for which to retrieve SERP data. Defaults to None.
@@ -108,20 +108,37 @@ class DataForSEOClient:
             url = self.api_url + "serp/google/organic/live/advanced"
         else:
             url = self.api_url + "serp/google/organic/task_post"
-        payload = [
-            {
-                **{
-                    "keyword": kw,
-                    "location_code": location_code,
-                    "language_code": "en",
-                    "device": "desktop",
-                    "os": "windows",
-                    "depth": 100,
-                },
-                **kwargs,
-            }
-            for kw in keyword
-        ]
+
+        if isinstance(keyword[0], tuple):
+            payload = [
+                {
+                    **{
+                        "keyword": kw[0],
+                        "location_code": kw[1],
+                        "language_code": "en",
+                        "device": "desktop",
+                        "os": "windows",
+                        "depth": 100,
+                    },
+                    **kwargs,
+                }
+                for kw in keyword
+            ]
+        else:
+            payload = [
+                {
+                    **{
+                        "keyword": kw,
+                        "location_code": location_code,
+                        "language_code": "en",
+                        "device": "desktop",
+                        "os": "windows",
+                        "depth": 100,
+                    },
+                    **kwargs,
+                }
+                for kw in keyword
+            ]
         response = self.client.post(url, json=payload)
 
         response = response.json()
