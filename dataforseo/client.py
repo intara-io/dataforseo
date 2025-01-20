@@ -1,6 +1,35 @@
 import base64
+import re
 
 import requests
+
+
+def contains_invalid_chars(input_string):
+    invalid_chars_pattern = (
+        r"[\u0000-\u001F]|[\u0021]|[\u0025]|[\u0028-\u002A]|[\u002C]|"
+        r"[\u003B-\u0040]|[\u005C]|[\u005E]|[\u0060]|[\u007B-\u009F]|"
+        r"[\u00A1-\u00A2]|[\u00A4-\u00A9]|[\u00AB-\u00B4]|[\u00B6]|"
+        r"[\u00B8-\u00B9]|[\u00BB-\u00BF]|[\u00D7]|[\u00F7]|[\u0250-\u0258]|"
+        r"[\u025A-\u02AF]|[\u02C2-\u02C5]|[\u02D2-\u02DF]|[\u02E5-\u02EB]|"
+        r"[\u02ED]|[\u02EF-\u02FF]|[\u0375]|[\u037E]|[\u0384-\u0385]|"
+        r"[\u0387]|[\u03F6]|[\u0482]|[\u0488-\u0489]|[\u055A-\u0560]|"
+        r"[\u0588-\u058F]|[\u05BE]|[\u05C0]|[\u05C3]|[\u05C6]|[\u05EF]|"
+        r"[\u05F3-\u060F]|[\u061B-\u061F]|[\u066A-\u066D]|[\u06D4]|"
+        r"[\u06DD-\u06DE]|[\u06E9]|[\u06FD-\u06FE]|[\u0700-\u070F]|"
+        r"[\u07F6-\u07F9]|[\u07FD-\u07FF]|[\u0830-\u083E]|[\u085E]|"
+        r"[\u0870-\u089F]|[\u08B5]|[\u08BE-\u08D3]|[\u08E2]|[\u0964-\u0965]|"
+        r"[\u0970]|[\u09F2-\u09FB]|[\u09FD-\u09FE]|[\u0A76]|[\u0AF0-\u0AF1]|"
+        r"[\u0B55]|[\u0B70]|[\u0B72-\u0B77]|[\u0BF0-\u0BFA]|[\u0C04]|"
+        r"[\u0C3C]|[\u0C5D]|[\u0C77-\u0C7F]|[\u0C84]|[\u0CDD]|[\u0D04]|"
+        r"[\u0D4F]|[\u0D58-\u0D5E]|[\u0D70-\u0D79]|[\u0D81]|[\u0DF4]|"
+        r"[\u0E3F]|[\u0E4F]|[\u0E5A-\u0E5B]|[\u0E86]|[\u0E89]|[\u0E8C]|"
+        r"[\u0E8E-\u0E93]|[\u0E98]|[\u0EA0]|[\u0EA8-\u0EA9]|[\u0EAC]|"
+        r"[\u0EBA]|[\u0F01-\u0F17]|[\u0F1A-\u0F1F]|[\u0F2A-\u0F34]|"
+        r"[\u0F36]|[\u0F38]|[\u0F3A-\u0F3D]|[\u0F85]|[\u0FBE-\u0FC5]|"
+        r"[\u0FC7-\u0FDA]|[\u104A-\u104F]|[\u109E-\u109F]|[\u10FB]"
+    )
+
+    return bool(re.search(invalid_chars_pattern, input_string))
 
 
 class InvalidParameterError(Exception):
@@ -164,6 +193,10 @@ class DataForSEOClient:
         if isinstance(keyword, str):
             keyword = [keyword]
 
+        clean_keywords = [kw for kw in keyword if not contains_invalid_chars(kw)]
+        if total_dropped := len(keyword) - len(clean_keywords):
+            print("Dropped", total_dropped, "invalid keywords")
+
         if live:
             url = self.api_url + "keywords_data/google_ads/search_volume/live"
         else:
@@ -171,7 +204,7 @@ class DataForSEOClient:
         payload = [
             {
                 **{
-                    "keywords": keyword,
+                    "keywords": clean_keywords,
                     "location_code": location_code,
                     "language_code": "en",
                     "date_from": date_from,
