@@ -67,6 +67,7 @@ class DataForSEOClient:
         location_code: int = 2840,
         live: bool = True,
         task_id: str = None,
+        debug: bool = False,
         **kwargs,
     ) -> dict | list[dict]:
         """
@@ -91,7 +92,15 @@ class DataForSEOClient:
                     json_response["tasks"][0].get("status_message"),
                     error_code=json_response["tasks"][0].get("status_code"),
                 )
-
+            if debug:
+                try:
+                    print(
+                        "Total request cost:",
+                        sum([item["cost"] for item in json_response["tasks"]]),
+                    )
+                except:
+                    print("Could not calculate total request cost")
+                    pass
             return (
                 json_response["tasks"][0]["result"]
                 if "tasks" in json_response
@@ -148,6 +157,16 @@ class DataForSEOClient:
                 error_code=response["tasks"][0].get("status_code"),
             )
 
+        if debug:
+            try:
+                print(
+                    "Total request cost:",
+                    sum([item["cost"] for item in response["tasks"]]),
+                )
+            except:
+                print("Could not calculate total request cost")
+                pass
+
         if live:
             return response
 
@@ -168,6 +187,7 @@ class DataForSEOClient:
         date_to: str = None,
         live: bool = True,
         task_id: str = None,
+        debug: bool = False,
         **kwargs,
     ) -> dict | list[dict]:
         """
@@ -197,6 +217,16 @@ class DataForSEOClient:
                     json_response["tasks"][0].get("status_message"),
                     error_code=json_response["tasks"][0].get("status_code"),
                 )
+
+            if debug:
+                try:
+                    print(
+                        "Total request cost:",
+                        sum([item["cost"] for item in json_response["tasks"]]),
+                    )
+                except:
+                    print("Could not calculate total request cost")
+                    pass
 
             return (
                 json_response["tasks"][0]["result"]
@@ -273,6 +303,16 @@ class DataForSEOClient:
                 response["tasks"][0].get("status_message"),
                 error_code=response["tasks"][0].get("status_code"),
             )
+
+        if debug:
+            try:
+                print(
+                    "Total request cost:",
+                    sum([item["cost"] for item in response["tasks"]]),
+                )
+            except:
+                print("Could not calculate total request cost")
+                pass
 
         if live:
             return response
