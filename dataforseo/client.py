@@ -145,7 +145,7 @@ class DataForSEOClient:
 
     def msv(
         self,
-        keyword: str | list[str] = None,
+        keyword: str | list[str] | list[tuple] = None,
         location_code: int = 2840,
         date_from: str = None,
         date_to: str = None,
@@ -156,7 +156,7 @@ class DataForSEOClient:
         """
         Fetches monthly search volume (MSV) data for given keywords from the DataForSEO API.
         Args:
-            keyword (str | list[str]): A single keyword or a list of keywords to fetch MSV data for.
+            keyword (str | list[str] | list[tuple]): A keyword or list of keywords to search for. If tuples, the second element should be the location code.
             location_code (int, optional): The location code for the search volume data. Defaults to 2840 (USA).
             date_from (str, optional): The start date for the search volume data in 'YYYY-MM-DD' format. Defaults to None.
             date_to (str, optional): The end date for the search volume data in 'YYYY-MM-DD' format. Defaults to None.
@@ -193,7 +193,27 @@ class DataForSEOClient:
         if isinstance(keyword, str):
             keyword = [keyword]
 
-        clean_keywords = [kw for kw in keyword if not contains_invalid_chars(kw)]
+        if isinstance(keyword[0], tuple):
+            clean_keywords = [
+                {"keyword": kw[0], "location_code": kw[1]}
+                for kw in keyword
+                if not contains_invalid_chars(kw[0])
+            ]
+            # group by location code
+            clean_keywords = [
+                {
+                    "keywords": [
+                        kw["keyword"]
+                        for kw in clean_keywords
+                        if kw["location_code"] == loc
+                    ],
+                    "location_code": loc,
+                }
+                for loc in set([kw["location_code"] for kw in clean_keywords])
+            ]
+        else:
+            clean_keywords = [kw for kw in keyword if not contains_invalid_chars(kw)]
+
         if total_dropped := len(keyword) - len(clean_keywords):
             print("Dropped", total_dropped, "invalid keywords")
 
@@ -201,18 +221,33 @@ class DataForSEOClient:
             url = self.api_url + "keywords_data/google_ads/search_volume/live"
         else:
             url = self.api_url + "keywords_data/google_ads/search_volume/task_post"
-        payload = [
-            {
-                **{
-                    "keywords": clean_keywords,
-                    "location_code": location_code,
-                    "language_code": "en",
-                    "date_from": date_from,
-                    "date_to": date_to,
-                },
-                **kwargs,
-            }
-        ]
+        if isinstance(keyword[0], tuple):
+            payload = [
+                {
+                    **{
+                        "keywords": kw["keywords"],
+                        "location_code": kw["location_code"],
+                        "language_code": "en",
+                        "date_from": date_from,
+                        "date_to": date_to,
+                    },
+                    **kwargs,
+                }
+                for kw in clean_keywords
+            ]
+        else:
+            payload = [
+                {
+                    **{
+                        "keywords": clean_keywords,
+                        "location_code": location_code,
+                        "language_code": "en",
+                        "date_from": date_from,
+                        "date_to": date_to,
+                    },
+                    **kwargs,
+                }
+            ]
         response = self.client.post(url, json=payload)
 
         response = response.json()
